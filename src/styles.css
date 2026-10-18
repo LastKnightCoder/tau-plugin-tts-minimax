@@ -1,0 +1,8 @@
+.tau-minimax-tts {
+  display: grid;
+  gap: 12px;
+}
+.tau-minimax-tts label {
+  display: grid;
+  gap: 6px;
+}
