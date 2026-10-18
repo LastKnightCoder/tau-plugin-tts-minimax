@@ -1,8 +1,8 @@
-# 当前开发状态
+# 开发指南
 
-本仓库是TTS插件化M1的独立源码，依赖SDK 0.13.0草案，尚未正式发布。运行代码全部在src中，build.mjs仅负责打包，不包含宿主或服务商运行逻辑。
+使用 Node.js 22、pnpm 11.9.0 和公共 SDK 0.13.0。运行代码全部在 src 中，build.mjs 仅负责打包。
 
-M1使用客户端仓库生成的SDK声明包，在隔离作者目录安装、测试、构建；源码package.json不写本机路径。SDK正式发布后再生成并提交公共依赖锁文件，执行GitHub干净克隆验收，随后发布插件。当前不能把M1验证结果当成公共npm安装已验证。
+克隆后运行 `pnpm install --frozen-lockfile`、`pnpm test`、`pnpm build`，产物为 `dist/tau.tts-minimax-0.1.0.zip`。调整版本时同步修改 package.json 和 manifest.json；推送对应版本 tag 后，GitHub Action 自动构建并发布 ZIP 到 Release。
 
 业务参数与现有MiniMax实现对齐：默认speed 1.1，MP3、32kHz、128kbps、单声道；保留模型文本规则、服务错误分类和最多三次重试。请求和退避均接受任务取消信号，账号配置固定到每个任务实例。合成、音色和复刻使用同一个账号baseUrl。
 
