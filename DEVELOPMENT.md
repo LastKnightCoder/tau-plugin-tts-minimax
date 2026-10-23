@@ -1,5 +1,7 @@
 # 开发指南
 
+当前依赖、平台边界与验证步骤见 [兼容性说明](COMPATIBILITY.md)。
+
 使用 Node.js 22、pnpm 11.9.0 和公共 SDK 0.13.0。运行代码全部在 src 中，build.mjs 仅负责打包。
 
 克隆后运行 `pnpm install --frozen-lockfile`、`pnpm test`、`pnpm build`，产物为 `dist/tau.tts-minimax-0.1.0.zip`。调整版本时同步修改 package.json 和 manifest.json；推送对应版本 tag 后，GitHub Action 自动构建并发布 ZIP 到 Release。
