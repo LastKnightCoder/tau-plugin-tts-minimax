@@ -4,7 +4,7 @@
   "description": "使用 MiniMax 合成语音、查询音色和复刻音色，支持多个独立账号。",
   "categories": ["voice"],
   "keywords": ["朗读", "MiniMax"],
-  "version": "0.1.9",
+  "version": "0.1.10",
   "targets": {
     "desktop": {
       "minAppVersion": "0.59.4"
