@@ -2,20 +2,12 @@
   "id": "tau.tts-minimax",
   "name": "MiniMax 语音",
   "description": "使用 MiniMax 合成语音、查询音色和复刻音色，支持多个独立账号。",
-  "categories": [
-    "voice"
-  ],
-  "keywords": [
-    "朗读",
-    "MiniMax"
-  ],
-  "version": "0.1.8",
-  "requires": [
-    "fetch"
-  ],
+  "categories": ["voice"],
+  "keywords": ["朗读", "MiniMax"],
+  "version": "0.1.9",
   "targets": {
     "desktop": {
-      "minAppVersion": "0.59.2"
+      "minAppVersion": "0.59.4"
     }
   }
 }
