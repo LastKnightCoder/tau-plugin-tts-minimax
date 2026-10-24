@@ -56,19 +56,27 @@ export async function minimaxSynthesize(
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    let hostNetworkTypeError = false;
     try {
-      const response = await ctx.fetch(`${apiBase(ctx.baseUrl)}/v1/t2a_v2`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${ctx.apiKey}`,
-        },
-        body: JSON.stringify(requestBody),
-        signal: AbortSignal.any([
-          ctx.signal,
-          AbortSignal.timeout(SYNTHESIZE_TIMEOUT_MS),
-        ]),
-      });
+      let response: Response;
+      try {
+        response = await ctx.fetch(`${apiBase(ctx.baseUrl)}/v1/t2a_v2`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${ctx.apiKey}`,
+          },
+          body: JSON.stringify(requestBody),
+          signal: AbortSignal.any([
+            ctx.signal,
+            AbortSignal.timeout(SYNTHESIZE_TIMEOUT_MS),
+          ]),
+        });
+      } catch (error) {
+        // 原生桥以 TypeError 上报网络失败；仅在 fetch 边界标记，避免重试业务类型错误。
+        hostNetworkTypeError = error instanceof TypeError;
+        throw error;
+      }
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -133,7 +141,10 @@ export async function minimaxSynthesize(
         throw new Error("Minimax 服务响应超时，请稍后重试");
       }
 
-      if (attempt < maxRetries && isNetworkError(error)) {
+      if (
+        attempt < maxRetries &&
+        (hostNetworkTypeError || isNetworkError(error))
+      ) {
         const delay = calculateRetryDelay(attempt, 1001);
         console.warn(
           `网络错误: ${lastError.message}，${delay}ms 后重试 (${attempt + 1}/${maxRetries})`,

@@ -138,3 +138,60 @@ it("永久失败不重试，取消重试等待后不再发送请求", async () =
   await vi.advanceTimersByTimeAsync(60000);
   expect(fetch).toHaveBeenCalledTimes(1);
 });
+
+it("中文原生连接 TypeError 不依赖错误消息即可重试", async () => {
+  vi.useFakeTimers();
+  const fetch = vi
+    .fn<typeof globalThis.fetch>()
+    .mockRejectedValueOnce(new TypeError("网络连接失败"))
+    .mockResolvedValueOnce(response({ data: { audio: "00ff10" } }));
+  const provider = createMinimaxInstance(
+    fetch,
+    { apiKey: "test" },
+    "speech-2.8-hd",
+  );
+  const pending = provider.synthesize({ text: "a", voiceId: "v" }, signal());
+  const assertion = expect(pending).resolves.toEqual({
+    audio: new Uint8Array([0, 255, 16]),
+    mime: "audio/mpeg",
+  });
+  await vi.runAllTimersAsync();
+  await assertion;
+  expect(fetch).toHaveBeenCalledTimes(2);
+});
+
+it("响应业务处理的 TypeError 不作为宿主网络错误重试", async () => {
+  const invalidResponse = response({ data: { audio: "00ff10" } });
+  vi.spyOn(invalidResponse, "json").mockRejectedValue(
+    new TypeError("业务数据类型错误"),
+  );
+  const fetch = vi
+    .fn<typeof globalThis.fetch>()
+    .mockResolvedValue(invalidResponse);
+  const provider = createMinimaxInstance(
+    fetch,
+    { apiKey: "test" },
+    "speech-2.8-hd",
+  );
+  await expect(
+    provider.synthesize({ text: "a", voiceId: "v" }, signal()),
+  ).rejects.toThrow("业务数据类型错误");
+  expect(fetch).toHaveBeenCalledTimes(1);
+});
+
+it("宿主 fetch 的 AbortError 不进入网络重试", async () => {
+  const controller = new AbortController();
+  const fetch = vi.fn<typeof globalThis.fetch>().mockImplementation(async () => {
+    controller.abort();
+    throw controller.signal.reason;
+  });
+  const provider = createMinimaxInstance(
+    fetch,
+    { apiKey: "test" },
+    "speech-2.8-hd",
+  );
+  await expect(
+    provider.synthesize({ text: "a", voiceId: "v" }, controller.signal),
+  ).rejects.toMatchObject({ name: "AbortError" });
+  expect(fetch).toHaveBeenCalledTimes(1);
+});
