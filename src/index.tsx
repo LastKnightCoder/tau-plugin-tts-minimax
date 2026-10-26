@@ -20,10 +20,14 @@ export default definePlugin({
         target: "tts",
         models: MINIMAX_SPEECH_MODELS.map(id => ({ id })),
         form: {
-          groups: [{ title: "连接", fields: [
-            { key: "apiKey", label: "API Key", type: "secret" },
-            { key: "baseUrl", label: "服务地址", type: "url", optional: true, placeholder: "留空使用官方地址", summary: true },
-          ] }],
+          groups: [{
+            title: "账号",
+            description: "合成的文本会发送到 MiniMax 语音服务。",
+            fields: [
+              { key: "apiKey", label: "API Key", type: "secret", description: "在 MiniMax 开放平台获取" },
+              { key: "baseUrl", label: "服务地址", type: "url", optional: true, placeholder: "https://api.minimaxi.com", description: "留空使用官方地址；使用代理或海外站点时填写", summary: true },
+            ],
+          }],
           beforeSave: async values => parseConfig(values),
         },
       });
