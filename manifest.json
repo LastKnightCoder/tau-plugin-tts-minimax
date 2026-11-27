@@ -4,16 +4,28 @@
   "description": "使用 MiniMax 合成语音、查询音色和复刻音色，支持多个独立账号。",
   "categories": ["voice"],
   "keywords": ["朗读", "MiniMax"],
-  "version": "0.1.14",
+  "i18n": {
+    "zh-TW": {
+      "name": "MiniMax 語音",
+      "description": "使用 MiniMax 進行語音合成、查詢音色與聲音複刻，支援多個獨立帳號。",
+      "keywords": ["語音合成", "朗讀", "MiniMax"]
+    },
+    "en-US": {
+      "name": "MiniMax Speech",
+      "description": "Synthesize speech, browse voices, and clone voices with MiniMax, with support for multiple independent accounts.",
+      "keywords": ["text-to-speech", "TTS", "voice cloning", "MiniMax"]
+    }
+  },
+  "version": "0.1.15",
   "targets": {
     "desktop": {
-      "minAppVersion": "0.60.2"
+      "minAppVersion": "0.68.0"
     },
     "android": {
-      "minAppVersion": "0.2.9"
+      "minAppVersion": "0.6.0"
     },
     "ios": {
-      "minAppVersion": "0.2.9"
+      "minAppVersion": "0.6.0"
     }
   }
 }
